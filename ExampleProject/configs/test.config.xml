@@ -1,0 +1,9 @@
+﻿<Configurations>
+  <Model Class="ExampleProject.User" Sheet="用户数据">
+    <Property Property="ID" Column="编号" />
+    <Property Property="Name" Column="姓名" />
+    <Property Property="Age" Column="年龄" ColumnIndex="2"  />
+    <Property Property="Email" Column="邮箱" />
+    <Property Property="Birthday" Column="生日" />
+  </Model>
+</Configurations>
