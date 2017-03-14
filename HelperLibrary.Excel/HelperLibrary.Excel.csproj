@@ -68,6 +68,7 @@
     <Compile Include="Configurations\PropertyConfiguration.cs" />
     <Compile Include="Configurations\SheetMappingAttribute.cs" />
     <Compile Include="Configurations\XmlConfigurationLoader.cs" />
+    <Compile Include="DataReaderException.cs" />
     <Compile Include="DefaultDataConverter.cs" />
     <Compile Include="ExcelDataReader.cs" />
     <Compile Include="IDataConverter.cs" />

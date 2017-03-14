@@ -38,14 +38,12 @@ namespace HelperLibrary.Excel.Configurations
 
         private List<ModelConfiguration> ReadAllConfigs()
         {
-
             var serializer = new XmlSerializer(typeof(List<ModelConfiguration>), new XmlRootAttribute("Configurations"));
-
             using (var fs = File.OpenRead(filePath))
             {
                 var result = serializer.Deserialize(fs) as List<ModelConfiguration>;
                 if (result == null)
-                    throw new ConfigurationErrorsException("Loading configurations failed. File path is " + filePath);
+                    throw new DataReaderException("Loading configurations failed. File path is " + filePath);
 
                 return result;
             }
@@ -62,10 +60,10 @@ namespace HelperLibrary.Excel.Configurations
             foreach (var p in result.Properties)
             {
                 if (string.IsNullOrEmpty(p.Property))
-                    throw new Exception();
+                    throw new DataReaderException($"Configuration error: Property is required. Type is {result.Class}.");
 
                 if (string.IsNullOrEmpty(p.Column) && p.ColumnIndex < 0)
-                    throw new Exception();
+                    throw new DataReaderException($"Configuration error: either Column or ColumnIndex is required for property {p.Property}. Type is {result.Class}.");
             }
             return result;
         }

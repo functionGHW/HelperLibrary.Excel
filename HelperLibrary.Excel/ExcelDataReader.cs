@@ -55,14 +55,14 @@ namespace HelperLibrary.Excel
 
             if (configModel == null)
                 // 配置不存在
-                throw new Exception();
+                throw new DataReaderException($"Configurationo not found: type is '{modelType.AssemblyQualifiedName}'.");
 
             var wb = WorkbookFactory.Create(filePath);
             var sheet = wb.GetSheet(configModel.Sheet);
             int startRow = configModel.StartRow < 1 ? 1 : configModel.StartRow;
             if (sheet.LastRowNum < startRow)
                 // 起始行号错误
-                throw new Exception();
+                throw new DataReaderException($"StartRow configuration not correct. Type is {configModel.Class}.");
             
             var formatter = new DataFormatter();
             var headers = sheet.GetRow(startRow - 1).Select(cell => new
