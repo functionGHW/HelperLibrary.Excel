@@ -26,6 +26,9 @@ namespace HelperLibrary.Excel.Configurations
         private string filePath;
         private Lazy<List<ModelConfiguration>> configsLazy;
 
+        private static readonly Lazy<XmlSerializer> serializerLazy = new Lazy<XmlSerializer>(
+            () => new XmlSerializer(typeof(List<ModelConfiguration>), new XmlRootAttribute("Configurations")));
+
         public XmlConfigurationLoader(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -38,7 +41,7 @@ namespace HelperLibrary.Excel.Configurations
 
         private List<ModelConfiguration> ReadAllConfigs()
         {
-            var serializer = new XmlSerializer(typeof(List<ModelConfiguration>), new XmlRootAttribute("Configurations"));
+            var serializer = serializerLazy.Value;
             using (var fs = File.OpenRead(filePath))
             {
                 var result = serializer.Deserialize(fs) as List<ModelConfiguration>;
