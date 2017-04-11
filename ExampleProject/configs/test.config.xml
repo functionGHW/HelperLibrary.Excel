@@ -1,7 +1,16 @@
 ﻿<Configurations>
-  <Model Class="ExampleProject.User" Sheet="用户数据">
+  
+  <!-- 
+      StartRow: 指定数据起始行，从1开始。
+      HeaderRow： 指定表头行行号，如果未指定或小于1，则默认为StartRow上一行。
+      NoHeaderRow: 缺省为false，如果为true，则认为没有表头，忽略HeaderRow参数
+      SkipEmptyRow： 是否跳过空白行，true表示跳过
+  -->
+  <Model Class="ExampleProject.User" Sheet="用户数据" StartRow="5" HeaderRow="2" NoHeaderRow="false" SkipEmptyRow="true">
     <Property Property="ID" Column="编号" />
     <Property Property="Name" Column="姓名" />
+    
+    <!-- Column和ColumnIndex同时存在时，使用ColumnIndex忽略Column -->
     <Property Property="Age" Column="年龄" ColumnIndex="2"  />
     <Property Property="Email" Column="邮箱" />
     <Property Property="Birthday" Column="生日" />

@@ -40,6 +40,10 @@ namespace HelperLibrary.Excel.Configurations
                 Class = modelType.AssemblyQualifiedName,
                 Sheet = string.IsNullOrEmpty(sheetAttr.Sheet) ? modelType.Name : sheetAttr.Sheet,
                 StartRow = sheetAttr.StartRow,
+                HeaderRow = sheetAttr.HeaderRow,
+                NoHeaderRow = sheetAttr.NoHeaderRow,
+                SkipEmptyRow = sheetAttr.SkipEmptyRow,
+
                 Properties = CreatePropertyConfig(modelType),
             };
             // 未指定Sheet属性，则默认类型名称为工作表名称
@@ -82,7 +86,7 @@ namespace HelperLibrary.Excel.Configurations
             // 未指定Column和ColumnIndex配置，则默认使用属性名称作为列名
             if (result.Column == null && result.ColumnIndex < 0)
                 result.Column = prop.Name;
-            
+
             return result;
         }
     }

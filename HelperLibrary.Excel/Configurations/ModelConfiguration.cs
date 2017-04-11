@@ -40,6 +40,24 @@ namespace HelperLibrary.Excel.Configurations
         public int StartRow { get; set; }
 
         /// <summary>
+        /// 表格表头所在行行号(从1开始)，如果指定小于零的值且NoHeaderRow为False，则默认StartRow上一行为表头行
+        /// </summary>
+        [XmlAttribute]
+        public int HeaderRow { get; set; }
+
+        /// <summary>
+        /// 如果为True，则表明表格没有表头行，将忽略相关配置；此时无法通过列名自动获取列索引，必须手动指定列索引。
+        /// </summary>
+        [XmlAttribute]
+        public bool NoHeaderRow { get; set; }
+
+        /// <summary>
+        /// 是否跳过空白行
+        /// </summary>
+        [XmlAttribute]
+        public bool SkipEmptyRow { get; set; }
+
+        /// <summary>
         /// 属性映射配置
         /// </summary>
         [XmlElement("Property")]

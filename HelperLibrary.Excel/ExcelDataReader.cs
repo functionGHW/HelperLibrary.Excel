@@ -60,39 +60,57 @@ namespace HelperLibrary.Excel
             var wb = WorkbookFactory.Create(filePath);
             var sheet = wb.GetSheet(configModel.Sheet);
             int startRow = configModel.StartRow < 1 ? 1 : configModel.StartRow;
+            
             if (sheet.LastRowNum < startRow)
                 // 起始行号错误
                 throw new DataReaderException($"StartRow configuration not correct. Type is {configModel.Class}.");
-            
-            var formatter = new DataFormatter();
-            var headers = sheet.GetRow(startRow - 1).Select(cell => new
-            {
-                Column = formatter.FormatCellValue(cell),
-                Index = cell.ColumnIndex
-            }).ToArray();
-            
-            var validMappings = (from c in configModel.Properties
-                     let tmp = headers.FirstOrDefault(h => h.Column == c.Column)
-                     let hasColumn = !string.IsNullOrEmpty(c.Column)
-                     where modelType.GetProperty(c.Property) != null && (!hasColumn || (hasColumn && tmp != null))
-                     select new
-                     {
-                         c.Property,
-                         c.Converter,
-                         Index = string.IsNullOrEmpty(c.Column) ? c.ColumnIndex :
-                                tmp == null ? -1: tmp.Index
-                     }).ToArray();
 
+            var formatter = new DataFormatter();
+            var headers = new ColumnNameIndexPair[0];
+            if (!configModel.NoHeaderRow)
+            {
+                int headerRowNum = configModel.HeaderRow > 0 ? configModel.HeaderRow - 1 : startRow - 1;
+                if (headerRowNum >= startRow)
+                    // 表头行必须在起始数据行之前
+                    throw new DataReaderException($"StartRow must greater than HeaderRow. Type is {configModel.Class}.");
+
+                var headerRow = sheet.GetRow(headerRowNum);
+                if (headerRow != null)
+                {
+                    headers = headerRow.Select(cell => new ColumnNameIndexPair
+                    {
+                        Column = formatter.FormatCellValue(cell),
+                        Index = cell.ColumnIndex
+                    }).ToArray();
+                }
+
+            }
+            var validMappings = (from c in configModel.Properties
+                                 let tmp = headers.FirstOrDefault(h => h.Column == c.Column)
+                                 let hasColumn = !string.IsNullOrEmpty(c.Column)
+                                 where modelType.GetProperty(c.Property) != null && (!hasColumn || (hasColumn && tmp != null))
+                                 select new
+                                 {
+                                     c.Property,
+                                     c.Converter,
+                                     Index = string.IsNullOrEmpty(c.Column) ? c.ColumnIndex :
+                                            tmp == null ? -1 : tmp.Index
+                                 }).ToArray();
+
+            bool skipEmptyRow = configModel.SkipEmptyRow;
             var list = new List<T>();
             for (int i = startRow; i < sheet.LastRowNum; i++)
             {
                 var row = sheet.GetRow(i);
 
-                //if (row == null)
-                //{
-                //    // 空行处理
-                //    continue;
-                //}
+                if (row == null)
+                    continue;
+
+                if (skipEmptyRow && IsBlankRow(row))
+                {
+                    // 跳过空行
+                    continue;
+                }
                 var model = new T();
                 foreach (var item in validMappings)
                 {
@@ -104,7 +122,7 @@ namespace HelperLibrary.Excel
                         continue;
                     }
                     object value;
-                    switch(cell.CellType)
+                    switch (cell.CellType)
                     {
                         case CellType.Numeric:
                             // 进一步验证是否为Date数据
@@ -129,7 +147,12 @@ namespace HelperLibrary.Excel
             }
             return list;
         }
-        
+
+        private bool IsBlankRow(IRow row)
+        {
+            return row.All(cell => cell.CellType == CellType.Blank);
+        }
+
         private IDataConverter GetDataConverter(string converter)
         {
             if (string.IsNullOrEmpty(converter))
@@ -137,6 +160,13 @@ namespace HelperLibrary.Excel
 
             var t = Type.GetType(converter);
             return Activator.CreateInstance(t) as IDataConverter;
+        }
+
+        private class ColumnNameIndexPair
+        {
+            public string Column { get; set; }
+
+            public int Index { get; set; }
         }
     }
 }

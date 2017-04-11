@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace ExampleProject
 {
-    [SheetMapping("用户数据")]
+    [SheetMapping("用户数据", StartRow = 5, HeaderRow = 2, SkipEmptyRow = true)]
     public class User
     {
         [ColumnMapping("编号")]
@@ -31,6 +31,6 @@ namespace ExampleProject
         public string Email { get; set; }
 
         [ColumnMapping("生日")]
-        public DateTime? Birthday{ get; set; }
+        public DateTime? Birthday { get; set; }
     }
 }
