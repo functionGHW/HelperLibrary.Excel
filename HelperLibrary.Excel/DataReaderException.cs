@@ -18,5 +18,8 @@ namespace HelperLibrary.Excel
     {
         public DataReaderException(string message) : base(message)
         { }
+
+        public DataReaderException(string message, Exception innerException) : base(message, innerException)
+        { }
     }
 }

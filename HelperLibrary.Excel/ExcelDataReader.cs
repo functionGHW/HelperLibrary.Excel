@@ -60,7 +60,7 @@ namespace HelperLibrary.Excel
             var wb = WorkbookFactory.Create(filePath);
             var sheet = wb.GetSheet(configModel.Sheet);
             int startRow = configModel.StartRow < 1 ? 1 : configModel.StartRow;
-            
+
             if (sheet.LastRowNum < startRow)
                 // 起始行号错误
                 throw new DataReaderException($"StartRow configuration not correct. Type is {configModel.Class}.");
@@ -167,6 +167,11 @@ namespace HelperLibrary.Excel
             public string Column { get; set; }
 
             public int Index { get; set; }
+
+            public override string ToString()
+            {
+                return $"{{ Column={Column}, Index={Index} }}";
+            }
         }
     }
 }
