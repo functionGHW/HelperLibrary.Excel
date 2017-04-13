@@ -1,6 +1,8 @@
 ﻿<Configurations>
   
   <!-- 
+      Class: Model类型全名,可以使用包含程序集名称的类型全称。
+      Tag: 默认为null，用于区分同一个Model类型的多个不同配置。
       StartRow: 指定数据起始行，从1开始。
       HeaderRow： 指定表头行行号，如果未指定或小于1，则默认为StartRow上一行。
       NoHeaderRow: 缺省为false，如果为true，则认为没有表头，忽略HeaderRow参数

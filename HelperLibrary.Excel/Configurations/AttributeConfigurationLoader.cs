@@ -20,7 +20,13 @@ namespace HelperLibrary.Excel.Configurations
     /// </summary>
     public class AttributeConfigurationLoader : IConfigurationLoader
     {
-        public ModelConfiguration Load(Type modelType)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="modelType"></param>
+        /// <param name="tag">Attribute方式不支持此参数，保持null</param>
+        /// <returns></returns>
+        public ModelConfiguration Load(Type modelType, string tag = null)
         {
             if (modelType == null)
                 throw new ArgumentNullException(nameof(modelType));

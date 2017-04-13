@@ -27,6 +27,13 @@ namespace HelperLibrary.Excel.Configurations
         [XmlAttribute]
         public string Class { get; set; }
 
+
+        /// <summary>
+        /// （可选）配置标签，同一个类型可以存在多个不同标签的配置
+        /// </summary>
+        [XmlAttribute]
+        public string Tag { get; set; }
+
         /// <summary>
         /// Excel工作表名称。
         /// </summary>

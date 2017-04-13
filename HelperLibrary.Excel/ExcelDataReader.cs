@@ -48,14 +48,14 @@ namespace HelperLibrary.Excel
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<T> ReadData<T>() where T : class, new()
+        public List<T> ReadData<T>(string tag = null) where T : class, new()
         {
             var modelType = typeof(T);
-            var configModel = configLoader.Load(modelType);
+            var configModel = configLoader.Load(modelType, tag);
 
             if (configModel == null)
                 // 配置不存在
-                throw new DataReaderException($"Configurationo not found: type is '{modelType.AssemblyQualifiedName}'.");
+                throw new DataReaderException($"Configurationo not found: type is '{modelType.AssemblyQualifiedName}', Tag is {tag ?? "null"}.");
 
             var wb = WorkbookFactory.Create(filePath);
             var sheet = wb.GetSheet(configModel.Sheet);

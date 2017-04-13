@@ -60,16 +60,56 @@ namespace HelperLibrary.Excel.Configurations
                 if (result == null)
                     throw new DataReaderException("Loading configurations failed. File path is " + filePath);
 
+                var greps = result.GroupBy(m => m.Class?.Trim());
+
+                foreach (var g in greps)
+                {
+                    foreach (var m in g)
+                    {
+                        if (g.Count(item => item.Tag == m.Tag) > 1)
+                            throw new DataReaderException($"Tag already exist for Class {g.Key}. Tag is {m.Tag}");
+                    }
+                }
                 return result;
             }
         }
 
-        public ModelConfiguration Load(Type modelType)
+        /// <summary>
+        /// 获取全部配置
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ModelConfiguration> GetAllConfigs()
         {
             var allConfigs = configsLazy.Value;
 
-            var result = allConfigs.FirstOrDefault(item => item.Class == modelType.AssemblyQualifiedName
-                                            || item.Class == modelType.FullName);
+            return allConfigs.Select(m => new ModelConfiguration()
+            {
+                Class = m.Class,
+                HeaderRow = m.HeaderRow,
+                NoHeaderRow = m.NoHeaderRow,
+                Sheet = m.Sheet,
+                SkipEmptyRow = m.SkipEmptyRow,
+                StartRow = m.StartRow,
+                Tag = m.Tag,
+                Properties = m.Properties.ToList()
+            });
+        }
+
+        /// <summary>
+        /// 加载指定类型对应的配置项
+        /// </summary>
+        /// <param name="modelType"></param>
+        /// <param name="tag">可选的唯一标签值</param>
+        /// <returns></returns>
+        public ModelConfiguration Load(Type modelType, string tag = null)
+        {
+            var allConfigs = configsLazy.Value;
+
+            var result = allConfigs.FirstOrDefault(item => (item.Class == modelType.AssemblyQualifiedName
+                                            || item.Class == modelType.FullName) && item.Tag == tag);
+
+            if (result == null)
+                return null;
 
             // 检查是否有配置缺失
             foreach (var p in result.Properties)
